@@ -1,6 +1,22 @@
+import toml
 import random
 import subprocess as sb
 from shutil import which
+from dataclasses import dataclass
+
+
+@dataclass
+class Interface:
+    Address: str = None
+    ListenPort: str = None
+    PrivateKey: str = None
+
+@dataclass
+class Peer:
+    PublicKey: str = None
+    PresharedKey: str = None
+    Endpoint: str = None
+    AllowedIPs: str = None
 
 def wgc_genkey():
     wg = which("wg")
