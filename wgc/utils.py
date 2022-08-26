@@ -2,18 +2,22 @@ import toml
 import random
 import subprocess as sb
 from shutil import which
+from serde import serde
+from serde.toml import to_toml
 from dataclasses import dataclass
 
 
+"""
+dataclass: Node is for the storage all information of the node
+"""
+
+@serde
 @dataclass
-class Interface:
+class Node:
     Address: str = None
     ListenPort: str = None
-    PrivateKey: str = None
-
-@dataclass
-class Peer:
     PublicKey: str = None
+    PrivateKey: str = None
     PresharedKey: str = None
     Endpoint: str = None
     AllowedIPs: str = None
@@ -25,7 +29,7 @@ def wgc_genkey():
     else:
         prikey = sb.check_output([wg, "genkey"], text=True).strip()
         pubkey = sb.check_output([wg, "pubkey"], input=prikey, text=True).strip()
-        return {"key": prikey, "pub": pubkey}
+        return {"PublicKey": pubkey, "PrivateKey": prikey}
 
 def wgc_ipv4():
     """
@@ -40,14 +44,14 @@ def wgc_ipv4():
     if intranet == "B":
         ipv4 = "172.{}.{}.0/24".format(random.randint(16, 31), random.randint(0, 255))
     if intranet == "C":
-        ipv4 = "192.168.{}.0/24".format(random.randin(0, 255))
+        ipv4 = "192.168.{}.0/24".format(random.randint(0, 255))
     return ipv4
 
 def wgc_ipv6():
     """
     from  fd00::/64 to fdff::/64
     """ 
-    ipv6 = "{:x}::/64".format(random.randint(0xfd00, 0xfdff))
+    ipv6 = "{:x}::{}/64".format(random.randint(0xfd00, 0xfdff), random.randint(1, ))
     return ipv6
 
 if __name__ == "__main__":
