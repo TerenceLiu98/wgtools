@@ -12,7 +12,7 @@ def main(filename:str="wg0", nodename:str="node1", param:str="Endpoint", value:s
         config = configparser.ConfigParser()
         config.optionxform = str
         config.read("{}.conf".format(filename))
-        config.set("Node.{}".format(nodename), param, value)
+        config.set("{}".format(nodename), param, value)
         with open("{}.conf".format(filename), "w") as f:
             config.write(f)
         return None

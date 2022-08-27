@@ -43,3 +43,10 @@ def peer(filename:str="wg0", nodename:str="node1"):
         with open("{}.conf".format(nodename), "a") as f:
             f.write(peer)
             f.write("\n")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        raise ValueError("Command is needed")
+    else:
+        interface(filename=sys.argv[1], nodename=sys.argv[2])
+        peer(filename=sys.argv[1], nodename=sys.argv[2])
