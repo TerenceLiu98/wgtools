@@ -28,7 +28,7 @@ def wgc_genkey():
     else:
         prikey = sb.check_output([wg, "genkey"], text=True).strip()
         pubkey = sb.check_output([wg, "pubkey"], input=prikey, text=True).strip()
-        return {"PublicKey": pubkey, "PrivateKey": prikey}
+        return prikey, pubkey
 
 def ipv4Pool():
     """
