@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import configparser
 from serde import serde
@@ -20,7 +22,7 @@ if __name__ == "__main__":
         """
         print usable argument
         """
-        print("wgc_modify")
+        raise ValueError("Command is needed")
         sys.exit()
-    
-    main(filename=sys.argv[1], nodename=sys.argv[2], param=sys.argv[3], value=sys.argv[4])
+    else:    
+        main(filename=sys.argv[1], nodename=sys.argv[2], param=sys.argv[3], value=sys.argv[4])

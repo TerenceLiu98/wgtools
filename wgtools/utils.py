@@ -1,24 +1,41 @@
+#!/usr/bin/env python3
+
 import toml
 import names
 import random
 import subprocess as sb
 from shutil import which
 from serde import serde
-from serde.toml import to_toml
-from dataclasses import dataclass
+from serde.toml import to_toml, from_toml
+from dataclasses import dataclass, field
+from typing import Dict, List, Tuple, Optional
 
 
 """
+dataclass: Network is for the storage of the ip addr pool
 dataclass: Node is for the storage all information of the node
 """
 
 @serde
 @dataclass
-class Node:
-    Address: str = None
-    IPv4Pool: str = None
-    IPv6Pool: str = None
+class Network:
+    addr4Pool: str = "192.0.2.0/24"
 
+@serde
+@dataclass
+class Node:
+    Name: str = None
+    Address: List[str] = field(default_factory=lambda: [])
+    ListenPort: int = None
+    PrivateKey: str = ""
+    PublicKey: str = ""
+    AllowedIPs: List[str] = field(default_factory=lambda: [])
+    Endpoint: str = ""
+    PreUp: List[str] = field(default_factory=lambda: [])
+    PostUp: List[str] = field(default_factory=lambda: ["iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"])
+    PreDown: List[str] = field(default_factory=lambda: [])
+    PostDown: List[str] = field(default_factory=lambda: ["iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"])
+    PersistentKeepalive: int = 25
 
 
 def wgc_genkey():
@@ -28,7 +45,7 @@ def wgc_genkey():
     else:
         prikey = sb.check_output([wg, "genkey"], text=True).strip()
         pubkey = sb.check_output([wg, "pubkey"], input=prikey, text=True).strip()
-        return prikey, pubkey
+        return (prikey, pubkey)
 
 def ipv4Pool():
     """
