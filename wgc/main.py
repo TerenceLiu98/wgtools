@@ -11,10 +11,13 @@ class wgc(object):
         info = {**key, **info}
         return info 
 
-    def main(self):
+    def network(self):
        node = Node(**self.wgc_info())
-       return to_toml(node).replace('"', "")
+       toml_struct = "[Network-{}]\n".format(names.get_first_name()) +to_toml(node).replace('"', "")
+       with open("wg_vpn.conf", "w") as f:
+           f.write(toml_struct)
+
 
 if __name__ == "__main__":
     a = wgc()
-    a.main()
+    a.network()

@@ -1,4 +1,5 @@
 import toml
+import names
 import random
 import subprocess as sb
 from shutil import which
@@ -15,12 +16,10 @@ dataclass: Node is for the storage all information of the node
 @dataclass
 class Node:
     Address: str = None
-    ListenPort: str = None
-    PublicKey: str = None
-    PrivateKey: str = None
-    PresharedKey: str = None
-    Endpoint: str = None
-    AllowedIPs: str = None
+    IPv4Pool: str = None
+    IPv6Pool: str = None
+
+
 
 def wgc_genkey():
     wg = which("wg")
@@ -31,7 +30,7 @@ def wgc_genkey():
         pubkey = sb.check_output([wg, "pubkey"], input=prikey, text=True).strip()
         return {"PublicKey": pubkey, "PrivateKey": prikey}
 
-def wgc_ipv4():
+def ipv4Pool():
     """
     A: 10.0.0.0 to 10.255.255.255
     B: 172.16.0.0 to 172.31.255.255
@@ -47,7 +46,7 @@ def wgc_ipv4():
         ipv4 = "192.168.{}.0/24".format(random.randint(0, 255))
     return ipv4
 
-def wgc_ipv6():
+def ipv6Pool():
     """
     from  fd00::/64 to fdff::/64
     """ 
