@@ -12,11 +12,11 @@ class Network:
 @dataclass
 class Node:
     Name: str = None
-    Address: str = None
+    Address: List[str] = field(default_factory=lambda: [])
     ListenPort: int = None
     PrivateKey: str = ""
     PublicKey: str = ""
-    AllowedIPs: str = None
+    AllowedIPs: List[str] = field(default_factory=lambda: [])
     Endpoint: str = ""
     PreUp: List[str] = field(default_factory=lambda: [])
     PostUp: List[str] = field(default_factory=lambda: [])
