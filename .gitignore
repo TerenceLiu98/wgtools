@@ -2,9 +2,10 @@
 
 test/
 *-test/
-.test
+*.test
 tmp/
-.tmp/
+*.tmp/
+*.conf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
