@@ -39,7 +39,7 @@ def peer(filename:str="wg0", nodename:str="node1"):
                 "PublicKey = " + config[p_name]["PublicKey"] + "\n" + \
                 "AllowedIPs = " + config[p_name]["AllowedIPs"][2:-2] + "\n"
         if config[p_name]["Endpoint"] != "":
-            peer = peer + "Endpoint = " + config[p_name]["Endpoint"] + "\n"
+            peer = peer + "Endpoint = " + config[p_name]["Endpoint"] + ":" + config[p_name]["ListenPort"] + "\n"
         with open("{}.conf".format(nodename), "a") as f:
             f.write(peer)
             f.write("\n")
