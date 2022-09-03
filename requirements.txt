@@ -1,0 +1,5 @@
+toml==0.10.2
+casefy==0.1.2 
+mypy-extensions==0.4.3 
+pyserde==0.9.0
+typing_inspect==0.8.0

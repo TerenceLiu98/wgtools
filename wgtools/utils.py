@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import toml
-import names
 import random
 import subprocess as sb
 from shutil import which
@@ -20,23 +19,21 @@ dataclass: Node is for the storage all information of the node
 @dataclass
 class Network:
     addr4Pool: str = "192.0.2.0/24"
-
 @serde
 @dataclass
 class Node:
-    Name: str = None
-    Address: List[str] = field(default_factory=lambda: [])
+    Name: str = ""
+    Address: str = ""
     ListenPort: int = None
     PrivateKey: str = ""
     PublicKey: str = ""
-    AllowedIPs: List[str] = field(default_factory=lambda: [])
+    AllowedIPs: str = None#List[str] = field(default_factory=lambda: [])
     Endpoint: str = ""
-    PreUp: List[str] = field(default_factory=lambda: [])
-    PostUp: List[str] = field(default_factory=lambda: ["iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"])
-    PreDown: List[str] = field(default_factory=lambda: [])
-    PostDown: List[str] = field(default_factory=lambda: ["iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"])
+    PreUp: str = ""
+    PostUp: str = "iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
+    PreDown: str = ""
+    PostDown: str = "iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"
     PersistentKeepalive: int = 25
-
 
 def wgc_genkey():
     wg = which("wg")
