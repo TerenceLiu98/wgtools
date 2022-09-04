@@ -1,50 +1,42 @@
-#!/usr/bin/env python3
-
-import toml
+import base64
 import random
-import subprocess as sb
-from shutil import which
-from serde import serde
-from serde.toml import to_toml, from_toml
-from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Optional
+from dataclasses import dataclass
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
-
-"""
-dataclass: Network is for the storage of the ip addr pool
-dataclass: Node is for the storage all information of the node
-"""
-
-@serde
 @dataclass
 class Network:
-    addr4Pool: str = "192.0.2.0/24"
-@serde
+    v4addr: str = ""
+    v6addr: str = ""
+
 @dataclass
 class Node:
-    Name: str = ""
     Address: str = ""
-    ListenPort: int = None
+    ListenPort: int = 51820
     PrivateKey: str = ""
     PublicKey: str = ""
-    AllowedIPs: str = None#List[str] = field(default_factory=lambda: [])
+    PostUp: str = ""
+    PostDOwn: str = ""
     Endpoint: str = ""
-    PreUp: str = ""
-    PostUp: str = "iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
-    PreDown: str = ""
-    PostDown: str = "iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"
-    PersistentKeepalive: int = 25
+    AllowedIPs: str = ""
 
-def wgc_genkey():
-    wg = which("wg")
-    if wg == "None":
-        raise ValueError("Please install wireguard before generating the key.")
-    else:
-        prikey = sb.check_output([wg, "genkey"], text=True).strip()
-        pubkey = sb.check_output([wg, "pubkey"], input=prikey, text=True).strip()
-        return (prikey, pubkey)
+def genkey():
+    privkey = base64.b64encode(X25519PrivateKey.generate().private_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PrivateFormat.Raw,
+        encryption_algorithm=serialization.NoEncryption()
+    )).decode()
+    pubkey = base64.b64encode(X25519PrivateKey.from_private_bytes(
+                base64.b64decode(privkey.encode())
+            ).public_key().public_bytes(
+                encoding=serialization.Encoding.Raw,
+                format=serialization.PublicFormat.Raw,
+            )
+        ).decode()
+    return privkey, pubkey
 
-def ipv4Pool():
+
+def v4Pool():
     """
     A: 10.0.0.0 to 10.255.255.255
     B: 172.16.0.0 to 172.31.255.255
@@ -60,12 +52,9 @@ def ipv4Pool():
         ipv4 = "192.168.{}.0/24".format(random.randint(0, 255))
     return ipv4
 
-def ipv6Pool():
+def v6Pool():
     """
     from  fd00::/64 to fdff::/64
     """ 
-    ipv6 = "{:x}::{}/64".format(random.randint(0xfd00, 0xfdff), random.randint(1, ))
+    ipv6 = "{:x}::{}/64".format(random.randint(0xfd00, 0xfdff), random.randint(1, 254))
     return ipv6
-
-if __name__ == "__main__":
-    pass
