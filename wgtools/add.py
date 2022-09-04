@@ -14,6 +14,7 @@ def network(filename="wg0"):
             config.write(f)
             f.write("\n")
 
+
 def node(filename="wg0", nodename="node1"):
     """Add a new node to the network"""
     if Path(f"{filename}.conf").exists():
@@ -24,8 +25,11 @@ def node(filename="wg0", nodename="node1"):
             return ValueError("Node already exists")
         else:
             node = Node()
-            node.Address = config["Network"]["v4addr"][:-4] + str(random.randint(1,254)) +  "/32"
+            node.Name = nodename
+            node.Address = random_v4_addr(network=config["Network"]["v4addr"]) + "/32" + "," + \
+                            random_v6_addr(network=config["Network"]["v6addr"]) + "/128"
             node.PrivateKey, node.PublicKey = genkey()
+            node.AllowedIPs = node.Address
             config[nodename] = node.__dict__
             with open(f"{filename}.conf", "w") as f:
                 config.write(f)

@@ -1,5 +1,6 @@
 import base64
 import random
+import ipaddress
 from pathlib import Path
 from dataclasses import dataclass
 from configparser import ConfigParser, RawConfigParser
@@ -13,6 +14,7 @@ class Network:
 
 @dataclass
 class Node:
+    Name: str = ""
     Address: str = ""
     ListenPort: int = 51820
     PrivateKey: str = ""
@@ -58,5 +60,21 @@ def v6Pool():
     """
     from  fd00::/64 to fdff::/64
     """ 
-    ipv6 = "{:x}::{}/64".format(random.randint(0xfd00, 0xfdff), random.randint(1, 254))
+    ipv6 = "{:x}:{:x}:{:x}::/64".format(random.randint(0xfd00, 0xfdff),
+                                        random.randint(0x1000, 0xffff),
+                                        random.randint(0x1000, 0xffff))
     return ipv6
+
+def random_v4_addr(network):
+    net = ipaddress.IPv4Network(network)
+    addr_no = random.randint(0, net.num_addresses)
+    addr_int = int.from_bytes(net.network_address.packed, byteorder="big") + addr_no
+    addr = ipaddress.IPv4Address(addr_int)
+    return str(addr)
+
+def random_v6_addr(network):
+    net = ipaddress.IPv6Network(network)
+    addr_no = random.randint(0, net.num_addresses)
+    addr_int = int.from_bytes(net.network_address.packed, byteorder="big") + addr_no
+    addr = ipaddress.IPv6Address(addr_int.to_bytes(16, byteorder="big"))
+    return str(addr)
