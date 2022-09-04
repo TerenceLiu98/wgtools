@@ -8,7 +8,6 @@ def interface(filename:str="wg0", nodename:str="node1"):
     config = configparser.RawConfigParser()
     config.optionxform = str
     config.read("{}.conf".format(filename))
-    nodelist = config.sections()[1:]
 
     # interface generation
     interface = "[Interface]\n" + \
