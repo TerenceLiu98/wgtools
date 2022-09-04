@@ -1,6 +1,8 @@
 import base64
 import random
+from pathlib import Path
 from dataclasses import dataclass
+from configparser import ConfigParser, RawConfigParser
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
@@ -15,8 +17,8 @@ class Node:
     ListenPort: int = 51820
     PrivateKey: str = ""
     PublicKey: str = ""
-    PostUp: str = ""
-    PostDOwn: str = ""
+    PostUp: str = "iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
+    PostDown: str = "iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"
     Endpoint: str = ""
     AllowedIPs: str = ""
 
