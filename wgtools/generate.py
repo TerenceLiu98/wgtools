@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sys
 import configparser
 from utils import *
@@ -14,11 +12,11 @@ def interface(filename:str="wg0", nodename:str="node1"):
 
     # interface generation
     interface = "[Interface]\n" + \
-            "Address = " + config[nodename]["Address"][2:-2] + "\n" + \
+            "Address = " + config[nodename]["Address"] + "\n" + \
             "ListenPort = " + config[nodename]["ListenPort"] + "\n" + \
             "PrivateKey = " + config[nodename]["PrivateKey"] + "\n\n" + \
-            "PostUp = " + config[nodename]["PostUp"][2:-2] + "\n" + \
-            "PostDown = " + config[nodename]["PostDown"][2:-2] + "\n"
+            "PostUp = " + config[nodename]["PostUp"] + "\n" + \
+            "PostDown = " + config[nodename]["PostDown"] + "\n"
     
     with open("{}.conf".format(nodename), "w") as f:
         f.write(interface)
@@ -37,7 +35,7 @@ def peer(filename:str="wg0", nodename:str="node1"):
         peer = "[Peer]\n" + \
                 "# Name = " + config[p_name]["Name"] + "\n" + \
                 "PublicKey = " + config[p_name]["PublicKey"] + "\n" + \
-                "AllowedIPs = " + config[p_name]["AllowedIPs"][2:-2] + "\n"
+                "AllowedIPs = " + config[p_name]["AllowedIPs"] + "\n"
         if config[p_name]["Endpoint"] != "":
             peer = peer + "Endpoint = " + config[p_name]["Endpoint"] + ":" + config[p_name]["ListenPort"] + "\n"
         with open("{}.conf".format(nodename), "a") as f:
