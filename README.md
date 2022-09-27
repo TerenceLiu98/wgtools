@@ -17,15 +17,15 @@ A Tool of auto configuration generator of Wireguard.
 
 * configuration:
 	* new a ipv4 pool: `python add.py network wg0`
-	* new (a) peer(s): `python add.py wg0 node1` + `python add.py wg0 node2` + `python add.py wg0 node3`
+	* new (a) peer(s): `python add.py node wg0 node1` + `python add.py node wg0 node2` + `python add.py node wg0 node3`
 	* check the information: `cat wg0.conf`
-	* modify the endpoint: `python modify.py tun0 node1 Endpoint 1.1.1.1:11111`
+	* modify the endpoint: `python modify.py wg0 node1 Endpoint 1.1.1.1`
 	* generate configuration for each node: `python generate.py wg0 node1` + `python genenrate.py wg0 node2` + `python generate wg0 node3`
 
 * script
-	* copy the configuration to each machine
+	* copy the configuration to the machine
 	* use `wg-quick` to quick start the wireguard
-	* check the connectivity
+	* check the connectivity via `ping
 
 ## Acknowledgement
 
