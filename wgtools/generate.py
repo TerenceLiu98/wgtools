@@ -34,7 +34,8 @@ def peer(filename:str="wg0", nodename:str="node1"):
         peer = "[Peer]\n" + \
                 "# Name = " + config[p_name]["Name"] + "\n" + \
                 "PublicKey = " + config[p_name]["PublicKey"] + "\n" + \
-                "AllowedIPs = " + config[p_name]["AllowedIPs"] + "\n"
+                "AllowedIPs = " + config[p_name]["AllowedIPs"] + "\n" + \
+                "PersistentKeepalive = " + config[p_name]["PersistentKeepalive"] + "\n"
         if config[p_name]["Endpoint"] != "":
             peer = peer + "Endpoint = " + config[p_name]["Endpoint"] + ":" + config[p_name]["ListenPort"] + "\n"
         with open("{}.conf".format(nodename), "a") as f:
@@ -42,8 +43,5 @@ def peer(filename:str="wg0", nodename:str="node1"):
             f.write("\n")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        raise ValueError("Command is needed")
-    else:
-        interface(filename=sys.argv[1], nodename=sys.argv[2])
-        peer(filename=sys.argv[1], nodename=sys.argv[2])
+    interface(filename=sys.argv[1], nodename=sys.argv[2])
+    peer(filename=sys.argv[1], nodename=sys.argv[2])

@@ -23,6 +23,7 @@ class Node:
     PostDown: str = "iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"
     Endpoint: str = ""
     AllowedIPs: str = ""
+    PersistentKeepalive: int = 25
 
 def genkey():
     privkey = base64.b64encode(X25519PrivateKey.generate().private_bytes(

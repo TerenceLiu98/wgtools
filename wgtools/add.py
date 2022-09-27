@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+import sys
 from utils import *
 
 def network(filename="wg0"):
@@ -15,7 +15,7 @@ def network(filename="wg0"):
             f.write("\n")
 
 
-def node(filename="wg0", nodename="node1"):
+def node(filename="wg0", nodename="node71"):
     """Add a new node to the network"""
     if Path(f"{filename}.conf").exists():
         config = RawConfigParser()
@@ -36,6 +36,15 @@ def node(filename="wg0", nodename="node1"):
                 f.write("\n")
     else:
         return ValueError("Network does not exist")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        raise ValueError("Command is needed")
+    else:
+        if sys.argv[1] == "network":
+            network(filename=sys.argv[2])
+        else:
+            node(filename=sys.argv[2], nodename=sys.argv[3])
 
 
 
