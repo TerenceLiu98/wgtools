@@ -7,7 +7,7 @@ from pathlib import Path
 def interface(filename:str="wg0", nodename:str="node1"):
     config = configparser.RawConfigParser()
     config.optionxform = str
-    config.read("{}.conf".format(filename))
+    config.read(f"{filename}/{filename}.conf")
 
     # interface generation
     interface = "[Interface]\n" + \
@@ -17,14 +17,14 @@ def interface(filename:str="wg0", nodename:str="node1"):
             "PostUp = " + config[nodename]["PostUp"] + "\n" + \
             "PostDown = " + config[nodename]["PostDown"] + "\n"
     
-    with open("{}.conf".format(nodename), "w") as f:
+    with open(f"{filename}/{nodename}.conf", "w") as f:
         f.write(interface)
         f.write("\n")
 
 def peer(filename:str="wg0", nodename:str="node1"):
     config = configparser.ConfigParser()
     config.optionxform = str
-    config.read("{}.conf".format(filename))
+    config.read(f"{filename}/{filename}.conf")
     nodelist = config.sections()[1:]
     nodelist.remove(nodename)
 
@@ -38,7 +38,7 @@ def peer(filename:str="wg0", nodename:str="node1"):
                 "PersistentKeepalive = " + config[p_name]["PersistentKeepalive"] + "\n"
         if config[p_name]["Endpoint"] != "":
             peer = peer + "Endpoint = " + config[p_name]["Endpoint"] + ":" + config[p_name]["ListenPort"] + "\n"
-        with open("{}.conf".format(nodename), "a") as f:
+        with open(f"{filename}/{nodename}.conf", "a") as f:
             f.write(peer)
             f.write("\n")
 

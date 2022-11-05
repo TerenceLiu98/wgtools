@@ -2,8 +2,6 @@
 
 import sys
 import configparser
-from serde import serde
-from serde.toml import to_toml, from_toml
 
 def main(filename:str="wg0", nodename:str="node1", param:str="Endpoint", value:str=None):
     if value == None:
@@ -11,9 +9,9 @@ def main(filename:str="wg0", nodename:str="node1", param:str="Endpoint", value:s
     else:
         config = configparser.ConfigParser()
         config.optionxform = str
-        config.read("{}.conf".format(filename))
-        config.set("{}".format(nodename), param, value)
-        with open("{}.conf".format(filename), "w") as f:
+        config.read(f"{filename}/{filename}.conf")
+        config.set(f"{nodename}", param, value)
+        with open(f"{filename}/{filename}.conf", "w") as f:
             config.write(f)
         return None
 
