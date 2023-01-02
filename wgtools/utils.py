@@ -11,11 +11,15 @@ from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 class Network:
     v4addr: str = ""
     v6addr: str = ""
+    vxlan_id: int = 0
+    wg_addr: str = ""
 
 @dataclass
 class Node:
     Name: str = ""
-    Address: str = ""
+    v4Address: str = ""
+    v6Address: str = ""
+    wgAddress: str = ""
     ListenPort: int = 51820
     PrivateKey: str = ""
     PublicKey: str = ""
@@ -41,20 +45,23 @@ def genkey():
     return privkey, pubkey
 
 
-def v4Pool():
+def v4Pool(intranet:str=None):
     """
     A: 10.0.0.0 to 10.255.255.255
     B: 172.16.0.0 to 172.31.255.255
     C: 192.168.0.0 to 192.168.255.255
     """
     intranet_dict = ["A", "B", "C"]
-    intranet = intranet_dict[int("{}".format(random.randint(0, 2)))]
+    if intranet is None:
+        intranet = intranet_dict[int("{}".format(random.randint(0, 2)))]
     if intranet == "A":
         ipv4 = "10.{}.{}.0/24".format(random.randint(0, 255), random.randint(0, 255))
     if intranet == "B":
         ipv4 = "172.{}.{}.0/24".format(random.randint(16, 31), random.randint(0, 255))
     if intranet == "C":
-        ipv4 = "192.168.{}.0/24".format(random.randint(0, 255))
+        ipv4 = "192.168.{}.0/24".format(random.randint(0, 200))
+    if intranet == "D":
+        ipv4 = "192.168.{}.0/24".format(random.randint(200, 255))
     return ipv4
 
 def v6Pool():

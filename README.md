@@ -6,7 +6,14 @@ A Tool of auto configuration generator of Wireguard.
 ## Features
 
 * Automatrically select IP from the network pool assigned to client
-* Full-mesh network configuration
+* VXLAN over Wireguard - Full-mesh network configuration
+
+## Design
+
+1. Generate Network area: `python add.py netwrk areaA`
+   1. randomly choose a ip addr for the area: `add.network` as the vxlan ip
+   2. assign a reserved ip (`192.168.x.0/24`, where `x` in 200 - 254) to node for wireguard connection
+2. while wireguard connection established, we also estabilish a vxlan as an overlay network
 
 ## Usage
 
@@ -25,7 +32,7 @@ A Tool of auto configuration generator of Wireguard.
 * script
 	* copy the configuration to the machine
 	* use `wg-quick` to quick start the wireguard
-	* check the connectivity via `ping
+	* check the connectivity via `ping` (both wg ip and vxlan ip)
 
 ## Acknowledgement
 
