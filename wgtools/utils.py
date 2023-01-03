@@ -1,30 +1,33 @@
 import base64
 import random
 import ipaddress
+from typing import List, Dict
 from pathlib import Path
-from dataclasses import dataclass
-from configparser import ConfigParser, RawConfigParser
+from dataclasses import dataclass, field
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
 @dataclass
 class Network:
-    v4addr: str = ""
-    v6addr: str = ""
-    vxlan_id: int = 0
-    wg_addr: str = ""
+    name: str
+    v4addr: str
+    v6addr: str
+    vxlan_id: int
+    wg_addr: str
+    nodelist: Dict = field(default_factory=lambda: {})
 
 @dataclass
-class Node:
+class Nodeinfo:
     Name: str = ""
     v4Address: str = ""
     v6Address: str = ""
     wgAddress: str = ""
+    MTU: int = 1420
     ListenPort: int = 51820
     PrivateKey: str = ""
     PublicKey: str = ""
-    PostUp: str = "iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
-    PostDown: str = "iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"
+    PostUp: List = field(default_factory=lambda:["iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"])
+    PostDown: List = field(default_factory=lambda:["iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE"])
     Endpoint: str = ""
     AllowedIPs: str = ""
     PersistentKeepalive: int = 25

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import sys
+import json
 import pathlib
 from utils import *
 
@@ -8,33 +9,37 @@ def network(filename="wg0"):
     if Path(f"{filename}.conf").exists():
         return ValueError("File already exists")
     else:
-        network = Network(v4addr=v4Pool(), v6addr=v6Pool(), vxlan_id=random.randint(10000, 50000),wg_addr=v4Pool(intranet="D"))
-        config = ConfigParser()
-        config["Network"] = network.__dict__
-        with open(f"{filename}/{filename}.conf", "w") as f:
-            config.write(f)
-            f.write("\n")
+        network = Network(name=filename, v4addr=v4Pool(), v6addr=v6Pool(), 
+            vxlan_id=random.randint(10000, 50000), wg_addr=v4Pool(intranet="D"), nodelist={})
+        network = network.__dict__
+        with open(f"{filename}/{filename}.json", "w") as f:
+            json.dump(network, f)
+            f.close()
 
 def node(filename="wg0", nodename="node71"):
     """Add a new node to the network"""
-    if Path(f"{filename}/{filename}.conf").exists():
-        config = RawConfigParser()
-        config.optionxform = str
-        config.read(f"{filename}/{filename}.conf")
-        if nodename in config.sections():
+    if Path(f"{filename}/{filename}.json").exists():
+        with open(f"{filename}/{filename}.json", "r+") as f:
+            file = json.load(f)
+            f.close()
+        if nodename in list(file["nodelist"].keys()):
             return ValueError("Node already exists")
         else:
-            node = Node()
+            node = Nodeinfo()
             node.Name = nodename
-            node.v4Address = random_v4_addr(network=config["Network"]["v4addr"]) + "/24"
-            node.v6Address = random_v6_addr(network=config["Network"]["v6addr"]) + "/64"
-            node.wgAddress = random_v4_addr(network=config["Network"]["wg_addr"]) + "/24"
+            node.v4Address = random_v4_addr(network=file["v4addr"]) + "/24"
+            node.v6Address = random_v6_addr(network=file["v6addr"]) + "/64"
+            node.wgAddress = random_v4_addr(network=file["wg_addr"]) + "/24"
             node.PrivateKey, node.PublicKey = genkey()
             node.AllowedIPs = node.wgAddress[:-2] + "32"
-            config[nodename] = node.__dict__
-            with open(f"{filename}/{filename}.conf", "w") as f:
-                config.write(f)
-                f.write("\n")
+            #node = Node(Name = {node.Name:node.__dict__})
+            #node = {node.Name: node.__dict__}
+
+            with open(f"{filename}/{filename}.json", "r+") as f:
+                file = json.load(f)
+                file["nodelist"][f"{node.Name}"] = node.__dict__
+                f.seek(0)
+                json.dump(file, f)
     else:
         return ValueError("Network does not exist")
 
