@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
 import sys
-import configparser
+import json
 
 def main(filename:str="wg0", nodename:str="node1", param:str="Endpoint", value:str=None):
     if value == None:
         raise ValueError("Value cannot be empty.")
     else:
-        config = configparser.ConfigParser()
-        config.optionxform = str
-        config.read(f"{filename}/{filename}.conf")
-        config.set(f"{nodename}", param, value)
+        with open(f"{filename}/{filename}.json", "r+") as f:
+            config = json.load(f)
+            f.close()
+        config["nodelist"][nodename][param] = value
         with open(f"{filename}/{filename}.conf", "w") as f:
-            config.write(f)
+            json.dump(f)
         return None
 
 if __name__ == "__main__":
