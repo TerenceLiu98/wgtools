@@ -19,6 +19,7 @@ class Network:
 @dataclass
 class Nodeinfo:
     Name: str = ""
+    nid: str = ""
     v4Address: str = ""
     v6Address: str = ""
     wgAddress: str = ""
@@ -53,6 +54,7 @@ def v4Pool(intranet:str=None):
     A: 10.0.0.0 to 10.255.255.255
     B: 172.16.0.0 to 172.31.255.255
     C: 192.168.0.0 to 192.168.255.255
+    D: 169.254.0.0 to 169.254.255.255 (link-local)
     """
     intranet_dict = ["A", "B", "C"]
     if intranet is None:
@@ -62,9 +64,9 @@ def v4Pool(intranet:str=None):
     if intranet == "B":
         ipv4 = "172.{}.{}.0/24".format(random.randint(16, 31), random.randint(0, 255))
     if intranet == "C":
-        ipv4 = "192.168.{}.0/24".format(random.randint(0, 200))
+        ipv4 = "192.168.{}.0/24".format(random.randint(0, 255))
     if intranet == "D":
-        ipv4 = "192.168.{}.0/24".format(random.randint(200, 255))
+        ipv4 = "169.254.{}.0/24".format(random.randint(0, 255))
     return ipv4
 
 def v6Pool():

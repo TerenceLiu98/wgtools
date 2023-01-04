@@ -56,7 +56,7 @@ def peer(filename:str="wg0", nodename:str="node1"):
                 "AllowedIPs = " + str(config["nodelist"][peer_name]["AllowedIPs"]) + "\n" + \
                 "PersistentKeepalive = " + str(config["nodelist"][peer_name]["PersistentKeepalive"]) + "\n"
         if config["nodelist"][peer_name]["Endpoint"] != "":
-            peer = peer + "Endpoint = " + config["nodelist"][peer_name]["Endpoint"] + ":" + config["nodelist"][peer_name]["ListenPort"] + "\n"
+            peer = peer + "Endpoint = " + config["nodelist"][peer_name]["Endpoint"] + ":" + str(config["nodelist"][peer_name]["ListenPort"]) + "\n"
         with open(f"{filename}/{nodename}.conf", "a") as f:
             f.write(peer)
             f.write("\n")

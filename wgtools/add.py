@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import sys
+import uuid
 import json
 import pathlib
 from utils import *
@@ -27,9 +28,10 @@ def node(filename="wg0", nodename="node71"):
         else:
             node = Nodeinfo()
             node.Name = nodename
+            node.nid = str(uuid.uuid3(uuid.NAMESPACE_URL, f"https://{nodename}.{filename}.local"))
             node.v4Address = random_v4_addr(network=file["v4addr"]) + "/24"
             node.v6Address = random_v6_addr(network=file["v6addr"]) + "/64"
-            node.wgAddress = random_v4_addr(network=file["wg_addr"]) + "/24"
+            node.wgAddress = random_v4_addr(network=file["wg_addr"]) + "/16"
             node.PrivateKey, node.PublicKey = genkey()
             node.AllowedIPs = node.wgAddress[:-2] + "32"
             #node = Node(Name = {node.Name:node.__dict__})
