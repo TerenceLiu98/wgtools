@@ -1,15 +1,12 @@
 from utils import *
 from database import *
+from flask_restful import Resource, Api, reqparse
 
-# user flask as the api server for pushing configuration to each node
-# each node has it uuid and based on the uuid we can push the configuration to the node
-@app.route('/')
-def index():
-	return Response("Hello World", status=200, mimetype='application/json')
+api = Api(app)
 
+parser = reqparse.RequestParser()
+parser.add_argument('node', type=dict, help='Node information', location="json") # node info with json
 
-# client side get all other node's information with GET method
-# client side push it's own information with POST method
 def check_node(new_node): 
 	sid = new_node["sid"]
 	nodes_in_ns = Node.query.filter_by(sid=sid).all()
@@ -21,31 +18,54 @@ def check_node(new_node):
 	else:
 		return False
 
-@app.route('/api/node/', methods=['GET', "POST"])
-def node():
-	if request.method == "GET":
-		ns, uuid = request.args.get("ns"), request.args.get("nid")
-		namespace = Namespace.query.filter_by(sid=1).first()
+class Node_in_Namespace(Resource):
+	def get(self, sid):
+		namespace = Namespace.query.filter_by(sid=sid).first()
 		nodes = []
 		for i in range(0, len(namespace.nodes)):
-			if namespace.nodes[i].nid != uuid:
-				nodes.append(namespace.nodes[i])
+			nodes.append(namespace.nodes[i])
 		return jsonify(nodes=nodes)
 
-	if request.method == "POST":
-		content = request.json
-		nid = content["nid"]
-		if  bool(Node.query.filter_by(nid=nid).first()):
+	def put(self, sid):
+		args = parser.parse_args()
+		node_info = args["node"]
+		if bool(Node.query.filter_by(nid=node_info["nid"]).first()):
+			node = Node.query.filter_by(nid=node_info["nid"]).first()
+			for k, v in node_info.items():
+				if k in node.__dict__ and node_info[k] != v:
+					new_node = Node(**node_info)
+					database.session.delete(node)
+					database.session.add(new_node)
+					database.session.commit()
+					return jsonify(response="Node updated")
+				else:
+					return jsonify(response="Same information, no need to update")
+
+	def post(self, sid):
+		args = parser.parse_args()
+		node_info = args["node"]
+		if bool(Node.query.filter_by(nid=node_info["nid"]).first()):
 			return jsonify(response="Node exists")
-		elif check_node(new_node=content) != True:
+		elif check_node(new_node=node_info) != True:
 			return jsonify(response="IP Address duplicated")
 		else:
-			node = Node(**content)
+			node = Node(**node_info)
 			database.session.add(node)
 			database.session.commit()
 			return jsonify(response="Node added")
 
+	def delete(self, sid):
+		args = parser.parse_args()
+		node_info = args["node"]
+		if bool(Node.query.filter_by(nid=node_info["nid"]).first()):
+			node = Node.query.filter_by(nid=node_info["nid"]).first()
+			database.session.delete(node)
+			database.session.commit()
+			return jsonify(response="Node deleted")
 
-if __name__ == "__main__":
-	database.create_all()
-	app.run(debug=True)
+		
+
+api.add_resource(Node_in_Namespace, "/api/node/<int:sid>")
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -14,6 +14,7 @@ client json design
 		"MTU": 0,
 		"ListenPort": 0,
 		"PublicKey": "",
+		"PrivateKey": "", # drop this before post/put
 		"Endpoint": "",
 		"AllowedIPs": "",
 		"PersistentKeepalive": 0
@@ -34,33 +35,31 @@ client json design
 }
 """
 
-"""
-get: https://<URL>/api/node/?ns=<namespace>&uuid=<uuid>
-post: https://<URL>/api/node/<namespace>
-"""
+class Client(object):
 
-def get_peer(url, namespace, uuid):
-    re = requests.get(url, params={"ns": namespace, "uuid": uuid})
-    re.status_code
-    return re.json()
+	def __init__(self, url):
+		self.url = url
+		with open("node.json", "r") as f:
+			self.node_info = json.load(f)
+			f.close()
+		self.node_info["node"].pop("PrivateKey")
 
-def push_info(url, node_info):
-    re = requests.post(url, json=node_info)
-    return re.json()
+	def get(self):
+		re = requests.get(self.url)
+		response = re.json()
+		return response["nodes"]
 
-def main(url):
-    with open("node.json", "r") as f:
-        node_info = json.load(f)
-        f.close()
-    push_info = push_info(url, node_info)
-    peer_info = get_peer(url, namespace=node_info["node"]["sid"], uuid=node_info["node"]["nid"])
-    with open("node.json", "r+") as f:
-        node_info = json.load(f)
-        for i in range(0, len(peer_info["nodes"])):
-            if peer_info["nodes"][i]["nid"] not in node_info["peerlist"]:
-                node_info["peerlist"][peer_info["nodes"][i]["nid"]] = peer_info["nodes"][i]
-                f.seek(0)
-                json.dump(node_info, f)
-            else:
-                pass
-        f.close()
+	def put(self):
+		re = requests.get(self.url, json=node_info)
+		response = re.json()
+		return response
+
+	def post(self):
+		re = requests.post(self.url, json=node_info)
+		response = re.json()
+		return response
+
+	def delete(self):
+		re = requests.delete(self.url, json=node_info)
+		response = re.json()
+		return response

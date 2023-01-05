@@ -5,3 +5,4 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, Date
 from dataclasses import dataclass
 from datetime import datetime
 
+app = Flask(__name__)

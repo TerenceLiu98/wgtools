@@ -1,6 +1,5 @@
 from utils import *
 
-app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 database = SQLAlchemy(app)
@@ -18,13 +17,11 @@ class User(database.Model):
     sid: str = database.Column(database.String(128), database.ForeignKey("namespace.sid"), nullable=False)
 
 class Oauth4User(database.Model):
-    uid: str = database.Column("uid", database.String(128), data.ForeignKey("user.uid") primary_key=True)
+    uid: str = database.Column("uid", database.String(128), database.ForeignKey("user.uid"), primary_key=True)
     token_type: str = database.Column("token_type", database.String(100), nullable=False)
     access_token: str = database.Column("access_token", database.String(100), nullable=False)
     refresh_token: str = database.Column("refresh_token", database.String(100), nullable=False)
     expires_in: int = database.Column("expires_in", database.Integer, nullable=False)
-
-
 
 @dataclass
 class Node(database.Model):
