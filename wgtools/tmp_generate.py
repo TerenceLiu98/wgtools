@@ -9,31 +9,14 @@ def interface(filename:str="wg0", nodename:str="node1"):
     config = configparser.RawConfigParser()
     config.optionxform = str
     config.read(f"{filename}/{filename}.conf")
-    nodelist = config.sections()[1:]
-    nodelist.remove(nodename)
-
-    bridge_statement = ""
-    for i in range(0, len(nodelist)):
-        p_name = nodelist[i]
-        wgAddress = config[p_name]["wgAddress"]
-        bridge_statement = bridge_statement + f"PostUp = bridge fdb append to 00:00:00:00:00:00 dst {wgAddress[:-3]} dev v%i" + "\n" \
 
     # interface generation
     interface = "[Interface]\n" + \
-            "Address = " + config[nodename]["wgAddress"] + "\n" + \
+            "Address = " + config[nodename]["Address"] + "\n" + \
             "ListenPort = " + config[nodename]["ListenPort"] + "\n" + \
             "PrivateKey = " + config[nodename]["PrivateKey"] + "\n\n" + \
-            "# PostUp = " + config[nodename]["PostUp"] + "\n" + \
-            "# PostDown = " + config[nodename]["PostDown"] + "\n" + \
-            "Table = off" + "\n" + \
-            "PostUp = ip link add v%i type vxlan id {} dstport 4789 ttl 1 dev %i".format(config["Network"]["vxlan_id"]) + "\n" + \
-            bridge_statement + \
-            "PostUp = ip address add {} dev v%i".format(config[nodename]["v4Address"]) + "\n" + \
-            "PostUp = ip address add {} dev v%i".format(config[nodename]["v6Address"]) + "\n" + \
-            "PostUp = ip link set v%i up" + "\n" + \
-            "PreDown = ip link set v%i down" + "\n" + \
-            "PreDown = ip link delete v%i" + "\n"
-
+            "PostUp = " + config[nodename]["PostUp"] + "\n" + \
+            "PostDown = " + config[nodename]["PostDown"] + "\n"
     
     with open(f"{filename}/{nodename}.conf", "w") as f:
         f.write(interface)
