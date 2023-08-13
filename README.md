@@ -20,7 +20,9 @@ A Tool of auto configuration generator of Wireguard.
 	* new (a) peer(s): `python add.py node wg0 node1` + `python add.py node wg0 node2` + `python add.py node wg0 node3`
 	* check the information: `cat wg0.conf`
 	* modify the endpoint: `python modify.py wg0 node1 Endpoint 1.1.1.1`
-	* generate configuration for each node: `python generate.py wg0 node1` + `python genenrate.py wg0 node2` + `python generate wg0 node3`
+	* generate configuration for each node:
+		* this can directly generate all nodes' configuration: `python generate.py wg0`
+		* generate configuration for each node: `python generate.py wg0 node1` + `python genenrate.py wg0 node2` + `python generate wg0 node3`
 
 * script
 	* copy the configuration to the machine
