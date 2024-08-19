@@ -48,8 +48,3 @@ if __name__ == "__main__":
 
         else:
             node(filename=sys.argv[2], nodename=sys.argv[3])
-
-
-
-        
-
