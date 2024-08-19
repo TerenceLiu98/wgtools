@@ -7,6 +7,7 @@ A Tool of auto configuration generator of Wireguard.
 
 * Automatrically select IP from the network pool assigned to client
 * VXLAN over Wireguard - Full-mesh network configuration
+* UDP2RAW - Bypass the unstable UDP environment(limited supported)
 
 ## Design
 
@@ -38,4 +39,5 @@ A Tool of auto configuration generator of Wireguard.
 
 * [VxWireguard-Generator](https://github.com/m13253/VxWireguard-Generator)
 * [wireguard-doc(Unofficial)](https://github.com/pirate/wireguard-docs)
+* [udp2raw](https://github.com/wangyu-/udp2raw)
 
